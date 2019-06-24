@@ -7,6 +7,9 @@ using SharpDX.Windows;
 using System.Drawing;
 using SharpDX.DXGI;
 using D3D11 = SharpDX.Direct3D11;
+//using SharpDX;
+using D3DCompiler = SharpDX.D3DCompiler;
+
 
 public class Game : IDisposable
 {
@@ -20,6 +23,18 @@ public class Game : IDisposable
     SwapChain m_swapChain;
     D3D11.RenderTargetView m_renderTargetView;
 
+    SharpDX.Vector3[] m_vertices = new SharpDX.Vector3[] { new SharpDX.Vector3(-0.5f, 0.5f, 0.0f), new SharpDX.Vector3(0.5f, 0.5f, 0.0f), new SharpDX.Vector3(0.0f, -0.5f, 0.0f) };
+    D3D11.Buffer m_triangleVertexBuffer;
+    D3D11.VertexShader m_vertexShader;
+    D3D11.PixelShader m_pixelShader;
+    D3D11.InputElement[] m_inputElments = new D3D11.InputElement[]
+    {
+        new D3D11.InputElement("POSITION", 0, Format.R32G32B32_Float, 0),
+    };
+    D3DCompiler.ShaderSignature m_inputSignature;
+    D3D11.InputLayout m_inputLayout;
+    SharpDX.Viewport m_viewPort;
+
     public Game()
     {
         m_renderForm = new RenderForm("SharpDxLearn");
@@ -27,6 +42,10 @@ public class Game : IDisposable
         m_renderForm.AllowUserResizing = false;
 
         InitializeDeviceResources();
+
+        InitializeShaders();
+
+        InitializeTriangle();
     }
 
     void InitializeDeviceResources()
@@ -49,6 +68,35 @@ public class Game : IDisposable
         {
             m_renderTargetView = new D3D11.RenderTargetView(m_d3d11Device, backBufer);
         }
+
+        m_viewPort = new SharpDX.Viewport(0, 0, m_width, m_height);
+        m_d3d11DeviceContext.Rasterizer.SetViewport(m_viewPort);
+    }
+
+    void InitializeTriangle()
+    {
+        m_triangleVertexBuffer = D3D11.Buffer.Create<SharpDX.Vector3>(m_d3d11Device, D3D11.BindFlags.VertexBuffer, m_vertices);
+    }
+
+    void InitializeShaders()
+    {
+        using (var vertexShaderByteCode = D3DCompiler.ShaderBytecode.CompileFromFile("vertexShader.hlsl", "main", "vs_4_0", D3DCompiler.ShaderFlags.Debug))
+        {
+            m_inputSignature = D3DCompiler.ShaderSignature.GetInputOutputSignature(vertexShaderByteCode);
+            m_vertexShader = new D3D11.VertexShader(m_d3d11Device, vertexShaderByteCode);
+        }
+        using (var pixelShaderByteCode = D3DCompiler.ShaderBytecode.CompileFromFile("pixelShader.hlsl", "main", "ps_4_0", D3DCompiler.ShaderFlags.Debug))
+        {
+            m_pixelShader = new D3D11.PixelShader(m_d3d11Device, pixelShaderByteCode);
+        }
+
+        m_d3d11DeviceContext.VertexShader.Set(m_vertexShader);
+        m_d3d11DeviceContext.PixelShader.Set(m_pixelShader);
+
+        m_d3d11DeviceContext.InputAssembler.PrimitiveTopology = SharpDX.Direct3D.PrimitiveTopology.TriangleList;
+
+        m_inputLayout = new D3D11.InputLayout(m_d3d11Device, m_inputSignature, m_inputElments);
+        m_d3d11DeviceContext.InputAssembler.InputLayout = m_inputLayout;
     }
 
     void Draw()
@@ -56,6 +104,10 @@ public class Game : IDisposable
         m_d3d11DeviceContext.OutputMerger.SetRenderTargets(m_renderTargetView);
         SharpDX.Mathematics.Interop.RawColor4 color = new SharpDX.Mathematics.Interop.RawColor4(32 / (float)255, 103 / (float)255, 178 / (float)255, 1);
         m_d3d11DeviceContext.ClearRenderTargetView(m_renderTargetView, color);
+
+        m_d3d11DeviceContext.InputAssembler.SetVertexBuffers(0, new D3D11.VertexBufferBinding(m_triangleVertexBuffer, SharpDX.Utilities.SizeOf<SharpDX.Vector3>(), 0));
+        m_d3d11DeviceContext.Draw(m_vertices.Count(), 0);
+
         m_swapChain.Present(1, PresentFlags.None);
     }
 
@@ -76,5 +128,12 @@ public class Game : IDisposable
         m_swapChain.Dispose();
         m_d3d11Device.Dispose();
         m_d3d11DeviceContext.Dispose();
+
+        m_triangleVertexBuffer.Dispose();
+        m_vertexShader.Dispose();
+        m_pixelShader.Dispose();
+
+        m_inputLayout.Dispose();
+        m_inputSignature.Dispose();
     }
 }
