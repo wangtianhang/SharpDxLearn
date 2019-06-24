@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Runtime.InteropServices;
 //using SharpDX.Windows;
 //using System.Drawing;
 //using SharpDX.DXGI;
@@ -10,6 +11,20 @@ using D3D11 = SharpDX.Direct3D11;
 //using SharpDX;
 using D3DCompiler = SharpDX.D3DCompiler;
 using DXGI = SharpDX.DXGI;
+
+
+[StructLayoutAttribute(LayoutKind.Sequential)]
+public struct VertexPositionColor
+{
+    public readonly SharpDX.Vector3 Position;
+    public readonly SharpDX.Color4 Color;
+
+    public VertexPositionColor(SharpDX.Vector3 position, SharpDX.Color4 color)
+    {
+        Position = position;
+        Color = color;
+    }
+}
 
 public class Game : IDisposable
 {
@@ -23,13 +38,20 @@ public class Game : IDisposable
     DXGI.SwapChain m_swapChain;
     D3D11.RenderTargetView m_renderTargetView;
 
-    SharpDX.Vector3[] m_vertices = new SharpDX.Vector3[] { new SharpDX.Vector3(-0.5f, 0.5f, 0.0f), new SharpDX.Vector3(0.5f, 0.5f, 0.0f), new SharpDX.Vector3(0.0f, -0.5f, 0.0f) };
+    //SharpDX.Vector3[] m_vertices = new SharpDX.Vector3[] { new SharpDX.Vector3(-0.5f, 0.5f, 0.0f), new SharpDX.Vector3(0.5f, 0.5f, 0.0f), new SharpDX.Vector3(0.0f, -0.5f, 0.0f) };
+    VertexPositionColor[] m_vertices = new VertexPositionColor[]
+    {
+        new VertexPositionColor(new SharpDX.Vector3(-0.5f, 0.5f, 0.0f), SharpDX.Color.Red),
+        new VertexPositionColor(new SharpDX.Vector3(0.5f, 0.5f, 0.0f), SharpDX.Color.Green),
+        new VertexPositionColor(new SharpDX.Vector3(0.0f, -0.5f, 0.0f), SharpDX.Color.Blue)
+    };
     D3D11.Buffer m_triangleVertexBuffer;
     D3D11.VertexShader m_vertexShader;
     D3D11.PixelShader m_pixelShader;
     D3D11.InputElement[] m_inputElments = new D3D11.InputElement[]
     {
-        new D3D11.InputElement("POSITION", 0, DXGI.Format.R32G32B32_Float, 0),
+        new D3D11.InputElement("POSITION", 0, DXGI.Format.R32G32B32_Float, 0, 0, D3D11.InputClassification.PerVertexData, 0),
+        new D3D11.InputElement("COLOR", 0, DXGI.Format.R32G32B32A32_Float, 12, 0, D3D11.InputClassification.PerVertexData, 0)
     };
     D3DCompiler.ShaderSignature m_inputSignature;
     D3D11.InputLayout m_inputLayout;
@@ -75,7 +97,7 @@ public class Game : IDisposable
 
     void InitializeTriangle()
     {
-        m_triangleVertexBuffer = D3D11.Buffer.Create<SharpDX.Vector3>(m_d3d11Device, D3D11.BindFlags.VertexBuffer, m_vertices);
+        m_triangleVertexBuffer = D3D11.Buffer.Create<VertexPositionColor>(m_d3d11Device, D3D11.BindFlags.VertexBuffer, m_vertices);
     }
 
     void InitializeShaders()
@@ -105,7 +127,7 @@ public class Game : IDisposable
         SharpDX.Mathematics.Interop.RawColor4 color = new SharpDX.Mathematics.Interop.RawColor4(32 / (float)255, 103 / (float)255, 178 / (float)255, 1);
         m_d3d11DeviceContext.ClearRenderTargetView(m_renderTargetView, color);
 
-        m_d3d11DeviceContext.InputAssembler.SetVertexBuffers(0, new D3D11.VertexBufferBinding(m_triangleVertexBuffer, SharpDX.Utilities.SizeOf<SharpDX.Vector3>(), 0));
+        m_d3d11DeviceContext.InputAssembler.SetVertexBuffers(0, new D3D11.VertexBufferBinding(m_triangleVertexBuffer, SharpDX.Utilities.SizeOf<VertexPositionColor>(), 0));
         m_d3d11DeviceContext.Draw(m_vertices.Count(), 0);
 
         m_swapChain.Present(1, DXGI.PresentFlags.None);
