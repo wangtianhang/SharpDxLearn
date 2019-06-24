@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.Runtime.InteropServices;
+//using System.Runtime.InteropServices;
 //using SharpDX.Windows;
 //using System.Drawing;
 //using SharpDX.DXGI;
@@ -89,12 +89,12 @@ public class TestDX2 : IDisposable
 
     void InitializeShaders()
     {
-        using (var vertexShaderByteCode = D3DCompiler.ShaderBytecode.CompileFromFile("vertexShader.hlsl", "main", "vs_4_0", D3DCompiler.ShaderFlags.Debug))
+        using (var vertexShaderByteCode = D3DCompiler.ShaderBytecode.CompileFromFile("../../src/vertexShader.hlsl", "main", "vs_4_0", D3DCompiler.ShaderFlags.Debug))
         {
             m_inputSignature = D3DCompiler.ShaderSignature.GetInputOutputSignature(vertexShaderByteCode);
             m_vertexShader = new D3D11.VertexShader(m_d3d11Device, vertexShaderByteCode);
         }
-        using (var pixelShaderByteCode = D3DCompiler.ShaderBytecode.CompileFromFile("pixelShader.hlsl", "main", "ps_4_0", D3DCompiler.ShaderFlags.Debug))
+        using (var pixelShaderByteCode = D3DCompiler.ShaderBytecode.CompileFromFile("../../src/pixelShader.hlsl", "main", "ps_4_0", D3DCompiler.ShaderFlags.Debug))
         {
             m_pixelShader = new D3D11.PixelShader(m_d3d11Device, pixelShaderByteCode);
         }

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.IO;
+//using System.IO;
 
 class Program
 {
@@ -11,7 +11,7 @@ class Program
     {
         //Console.WriteLine("test");
         //Console.ReadLine();
-        Console.WriteLine(Directory.GetCurrentDirectory());
+        //Console.WriteLine(System.IO.Directory.GetCurrentDirectory());
 
 //         using(Game game = new Game())
 //         {
