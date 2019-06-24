@@ -3,24 +3,24 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using SharpDX.Windows;
-using System.Drawing;
-using SharpDX.DXGI;
+//using SharpDX.Windows;
+//using System.Drawing;
+//using SharpDX.DXGI;
 using D3D11 = SharpDX.Direct3D11;
 //using SharpDX;
 using D3DCompiler = SharpDX.D3DCompiler;
-
+using DXGI = SharpDX.DXGI;
 
 public class Game : IDisposable
 {
-    RenderForm m_renderForm;
+    SharpDX.Windows.RenderForm m_renderForm;
 
     int m_width = 1280;
     int m_height = 720;
 
     D3D11.Device m_d3d11Device;
     D3D11.DeviceContext m_d3d11DeviceContext;
-    SwapChain m_swapChain;
+    DXGI.SwapChain m_swapChain;
     D3D11.RenderTargetView m_renderTargetView;
 
     SharpDX.Vector3[] m_vertices = new SharpDX.Vector3[] { new SharpDX.Vector3(-0.5f, 0.5f, 0.0f), new SharpDX.Vector3(0.5f, 0.5f, 0.0f), new SharpDX.Vector3(0.0f, -0.5f, 0.0f) };
@@ -29,7 +29,7 @@ public class Game : IDisposable
     D3D11.PixelShader m_pixelShader;
     D3D11.InputElement[] m_inputElments = new D3D11.InputElement[]
     {
-        new D3D11.InputElement("POSITION", 0, Format.R32G32B32_Float, 0),
+        new D3D11.InputElement("POSITION", 0, DXGI.Format.R32G32B32_Float, 0),
     };
     D3DCompiler.ShaderSignature m_inputSignature;
     D3D11.InputLayout m_inputLayout;
@@ -37,8 +37,8 @@ public class Game : IDisposable
 
     public Game()
     {
-        m_renderForm = new RenderForm("SharpDxLearn");
-        m_renderForm.ClientSize = new Size(m_width, m_height);
+        m_renderForm = new SharpDX.Windows.RenderForm("SharpDxLearn");
+        m_renderForm.ClientSize = new System.Drawing.Size(m_width, m_height);
         m_renderForm.AllowUserResizing = false;
 
         InitializeDeviceResources();
@@ -50,12 +50,12 @@ public class Game : IDisposable
 
     void InitializeDeviceResources()
     {
-        ModeDescription backBufferDesc = new ModeDescription(m_width, m_height, new Rational(60, 1), Format.R8G8B8A8_UNorm);
-        SwapChainDescription swapChainDesc = new SwapChainDescription()
+        DXGI.ModeDescription backBufferDesc = new DXGI.ModeDescription(m_width, m_height, new DXGI.Rational(60, 1), DXGI.Format.R8G8B8A8_UNorm);
+        DXGI.SwapChainDescription swapChainDesc = new DXGI.SwapChainDescription()
         {
             ModeDescription = backBufferDesc,
-            SampleDescription = new SampleDescription(1, 0),
-            Usage = Usage.RenderTargetOutput,
+            SampleDescription = new DXGI.SampleDescription(1, 0),
+            Usage = DXGI.Usage.RenderTargetOutput,
             BufferCount = 1,
             OutputHandle = m_renderForm.Handle,
             IsWindowed = true,
@@ -108,12 +108,12 @@ public class Game : IDisposable
         m_d3d11DeviceContext.InputAssembler.SetVertexBuffers(0, new D3D11.VertexBufferBinding(m_triangleVertexBuffer, SharpDX.Utilities.SizeOf<SharpDX.Vector3>(), 0));
         m_d3d11DeviceContext.Draw(m_vertices.Count(), 0);
 
-        m_swapChain.Present(1, PresentFlags.None);
+        m_swapChain.Present(1, DXGI.PresentFlags.None);
     }
 
     public void Run()
     {
-        RenderLoop.Run(m_renderForm, RenderCallback);
+        SharpDX.Windows.RenderLoop.Run(m_renderForm, RenderCallback);
     }
 
     void RenderCallback()
