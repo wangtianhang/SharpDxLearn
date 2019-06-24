@@ -62,8 +62,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="src\Game.cs" />
+    <Compile Include="src\Misc.cs" />
     <Compile Include="src\Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="src\TestDX2.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

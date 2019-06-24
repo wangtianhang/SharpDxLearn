@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-//using System.Runtime.InteropServices;
+using System.Runtime.InteropServices;
 //using SharpDX.Windows;
 //using System.Drawing;
 //using SharpDX.DXGI;
@@ -13,9 +13,7 @@ using D3DCompiler = SharpDX.D3DCompiler;
 using DXGI = SharpDX.DXGI;
 
 
-
-
-public class Game : IDisposable
+public class TestDX2 : IDisposable
 {
     SharpDX.Windows.RenderForm m_renderForm;
 
@@ -46,7 +44,7 @@ public class Game : IDisposable
     D3D11.InputLayout m_inputLayout;
     SharpDX.Viewport m_viewPort;
 
-    public Game()
+    public TestDX2()
     {
         m_renderForm = new SharpDX.Windows.RenderForm("SharpDxLearn");
         m_renderForm.ClientSize = new System.Drawing.Size(m_width, m_height);

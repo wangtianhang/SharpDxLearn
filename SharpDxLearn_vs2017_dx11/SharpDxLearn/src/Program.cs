@@ -13,9 +13,14 @@ class Program
         //Console.ReadLine();
         Console.WriteLine(Directory.GetCurrentDirectory());
 
-        using(Game game = new Game())
+//         using(Game game = new Game())
+//         {
+//             game.Run();
+//         }
+
+        using(TestDX2 test = new TestDX2())
         {
-            game.Run();
+            test.Run();
         }
     }
 }
