@@ -12,7 +12,9 @@ using D3D11 = SharpDX.Direct3D11;
 using D3DCompiler = SharpDX.D3DCompiler;
 using DXGI = SharpDX.DXGI;
 
-
+/// <summary>
+/// todo 想要在这个中实现一个透视方块
+/// </summary>
 public class TestDX2 : IDisposable
 {
     SharpDX.Windows.RenderForm m_renderForm;
